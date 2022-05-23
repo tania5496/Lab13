@@ -351,9 +351,9 @@ class LinkedBST(AbstractCollection):
         :rtype:
         """
         time_start = time.time()
-        print("Test1 time:" + self.search_in_list(path))
-        print("Test2 time:" + self.search_in_tree1(path))
-        print("Test3 time:" + self.search_in_tree2(path))
-        print("Test4 time:" + self.search_in_tree3(path))
+        print("Search time 10000 words in an alphabetically arranged dictionary:" +"\n"+ self.search_in_list(path))
+        print("Search time in the dictionary, which is represented as a binary search tree:" +"\n"+ self.search_in_tree1(path))
+        print("Search time in the dictionary, which is represented as a binary search tree (words are not added in alphabetical order):" +"\n"+ self.search_in_tree2(path))
+        print("Search time in the dictionary, which is represented as a binary search tree after its balancing:" +"\n"+ self.search_in_tree3(path))
         time_stop = time.time()
         print("Total time:"+time_stop - time_start)
