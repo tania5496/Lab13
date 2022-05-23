@@ -55,17 +55,20 @@ class LinkedBST(AbstractCollection):
         return None
 
     def inorder(self):
-        """Supports an inorder traversal on a view of self."""
-        lyst = list()
-
-        def recurse(node):
-            if node != None:
-                recurse(node.left)
-                lyst.append(node.data)
-                recurse(node.right)
-
-        recurse(self._root)
-        return iter(lyst)
+        result = []
+        stack = []
+        current = self._root
+        while True:
+            if current:
+                stack.append(current)
+                current = current.left
+            elif(stack):
+                current = stack.pop()
+                result.append(current.data)
+                current = current.right 
+            else: 
+                break
+        return result
 
     def postorder(self):
         """Supports a postorder traversal on a view of self."""
@@ -85,64 +88,39 @@ class LinkedBST(AbstractCollection):
         matched item, or None otherwise."""
         while self._root != None:
          
-            # pass right subtree as new tree
             if item > self._root.data:
                 self._root = self._root.right
-    
-            # pass left subtree as new tree
+
             elif item < self._root.data:
                 self._root = self._root.left
             else:
-                return True # if the key is found return 1
+                return True
         return False
 
-        # def recurse(node):
-        #     if node is None:
-        #         return None
-        #     elif item == node.data:
-        #         return node.data
-        #     elif item < node.data:
-        #         return recurse(node.left)
-        #     else:
-        #         return recurse(node.right)
-
-        # return recurse(self._root)
-
-    # Mutator methods
     def clear(self):
         """Makes self become empty."""
         self._root = None
         self._size = 0
 
     def add(self, data) :
-            #  Create a new node
             node = BSTNode(data)
             if (self._root == None) :
-                #  When adds a first node in bst
                 self._root = node
             else :
                 find = self._root
-                #  Add new node to proper position
                 while (find != None) :
                     if (find.data >= data) :
                         if (find.left == None) :
-                            #  When left child empty
-                            #  So add new node here
                             find.left = node
                             return
                         else :
-                            #  Otherwise
-                            #  Visit left sub-tree
                             find = find.left
                         
                     else :
                         if (find.right == None) :
-                            #  When right child empty
-                            #  So add new node here
                             find.right = node
                             return
                         else :
-                            #  Visit right sub-tree
                             find = find.right
 
     def remove(self, item):
@@ -152,13 +130,7 @@ class LinkedBST(AbstractCollection):
         if not item in self:
             raise KeyError("Item not in tree.""")
 
-        # Helper function to adjust placement of an item
         def lift_max_in_left(top):
-            # Replace top's datum with the maximum datum in the left subtree
-            # Pre:  top has a left child
-            # Post: the maximum node in top's left subtree
-            #       has been removed
-            # Post: top.data = maximum value in top's left subtree
             parent = top
             current = top.left
             while not current.right == None:
@@ -170,10 +142,8 @@ class LinkedBST(AbstractCollection):
             else:
                 parent.right = current.left
 
-        # Begin main part of the method
         if self.isEmpty(): return None
 
-        # Attempt to locate the node containing the item
         item_removed = None
         pre_root = BSTNode(None)
         pre_root.left = self._root
@@ -192,37 +162,20 @@ class LinkedBST(AbstractCollection):
                 direction = 'R'
                 current = current.right
 
-        # Return None if the item is absent
         if item_removed == None: return None
-
-        # The item is present, so remove its node
-
-        # Case 1: The node has a left and a right child
-        #         Replace the node's value with the maximum value in the
-        #         left subtree
-        #         Delete the maximium node in the left subtree
         if not current.left == None \
                 and not current.right == None:
             lift_max_in_left(current)
         else:
 
-            # Case 2: The node has no left child
             if current.left == None:
                 new_child = current.right
-
-                # Case 3: The node has no right child
             else:
                 new_child = current.left
-
-                # Case 2 & 3: Tie the parent to the new child
             if direction == 'L':
                 parent.left = new_child
             else:
                 parent.right = new_child
-
-        # All cases: Reset the root (if it hasn't changed no harm done)
-        #            Decrement the collection's size counter
-        #            Return the item
         self._size -= 1
         if self.isEmpty():
             self._root = None
@@ -381,7 +334,7 @@ class LinkedBST(AbstractCollection):
         words_list, words_to_search = self.read_file(path)
         for words in words_list:
             self.add(words)
-        self.is_balanced()
+        self.rebalance()
         time_start = time.time()
         for word in words_to_search:
             self.find(word)
@@ -397,12 +350,10 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
-        print(self.search_in_list(path))
-        # print(self.search_in_tree1(path))
-        # print(self.search_in_tree2(path))
-        # print(self.search_in_tree3(path))
-tree = LinkedBST()
-tree.demo_bst("words.txt")
-# for letter in "hello":
-#     tree.add(letter)
-# print(tree)
+        time_start = time.time()
+        print("Test1 time:" + self.search_in_list(path))
+        print("Test2 time:" + self.search_in_tree1(path))
+        print("Test3 time:" + self.search_in_tree2(path))
+        print("Test4 time:" + self.search_in_tree3(path))
+        time_stop = time.time()
+        print("Total time:"+time_stop - time_start)
